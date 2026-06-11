@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Luyện Mắt Vui Vẻ</title>
+  <link rel="stylesheet" href="style.css">
+
+  <!-- jsPsych 7 via CDN -->
+  <script src="https://unpkg.com/jspsych@7.3.4"></script>
+  <link href="https://unpkg.com/jspsych@7.3.4/css/jspsych.css" rel="stylesheet" type="text/css">
+
+  <!-- WebGazer via CDN -->
+  <script src="https://webgazer.cs.brown.edu/webgazer.js"></script>
+</head>
+<body>
+  <!-- Màn hình chào -->
+  <div id="welcome-screen" class="screen active">
+    <div class="welcome-content">
+      <div class="star-logo">⭐</div>
+      <h1>Luyện Mắt Vui Vẻ</h1>
+      <p class="subtitle">Dành cho bé 8 tuổi</p>
+
+      <div class="exercise-cards">
+        <div class="card" data-exercise="saccade">
+          <div class="card-icon">🎯</div>
+          <div class="card-title">Bắt Sao</div>
+          <div class="card-desc">Chạm vào ngôi sao xuất hiện</div>
+        </div>
+        <div class="card" data-exercise="pursuit">
+          <div class="card-icon">🐠</div>
+          <div class="card-title">Theo Cá</div>
+          <div class="card-desc">Giữ ngón tay theo chú cá</div>
+        </div>
+        <div class="card" data-exercise="fixation">
+          <div class="card-icon">👀</div>
+          <div class="card-title">Nhìn Chằm</div>
+          <div class="card-desc">Nhìn thật lâu vào mặt thú</div>
+        </div>
+        <div class="card" data-exercise="gap">
+          <div class="card-icon">⚡</div>
+          <div class="card-title">Phản Xạ</div>
+          <div class="card-desc">Chạm thật nhanh khi thấy đèn</div>
+        </div>
+      </div>
+
+      <button id="btn-dashboard" class="btn-secondary">📊 Xem tiến trình</button>
+
+      <div class="webgazer-toggle">
+        <label>
+          <input type="checkbox" id="enable-sound" checked>
+          Bật âm thanh khi chạm
+        </label>
+      </div>
+
+      <div class="webgazer-toggle">
+        <label>
+          <input type="checkbox" id="enable-webgazer">
+          Bật camera theo dõi mắt (tùy chọn)
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Màn hình chọn bài -->
+  <div id="exercise-screen" class="screen">
+    <div id="jspsych-container"></div>
+  </div>
+
+  <!-- Màn hình kết quả -->
+  <div id="result-screen" class="screen">
+    <div class="result-content">
+      <div class="result-trophy" id="result-trophy">🏆</div>
+      <h2 id="result-title">Tuyệt vời!</h2>
+      <div class="result-stats" id="result-stats"></div>
+      <div class="stars-earned" id="stars-earned"></div>
+      <button id="btn-play-again" class="btn-primary">Chơi lại</button>
+      <button id="btn-home" class="btn-secondary">Về trang chủ</button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="engine/draw.js"></script>
+  <script src="engine/sounds.js"></script>
+  <script src="engine/adaptive.js"></script>
+  <script src="engine/webgazer-wrapper.js"></script>
+  <script src="data/sessions.js"></script>
+  <script src="plugins/saccade-task.js"></script>
+  <script src="plugins/pursuit-task.js"></script>
+  <script src="plugins/fixation-hold.js"></script>
+  <script src="plugins/gap-saccade.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
