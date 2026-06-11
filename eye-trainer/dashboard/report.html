@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tiến Trình Luyện Mắt</title>
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    body { overflow-y: auto; background: #0a0e1a; }
+
+    .dashboard-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 24px 16px 60px;
+    }
+
+    .dash-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+
+    .dash-title {
+      font-size: 24px;
+      font-weight: 900;
+      color: #FFD700;
+    }
+
+    .btn-back {
+      background: rgba(255,255,255,0.08);
+      border: none;
+      color: #7B8DB0;
+      font-size: 14px;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    /* Exercise cards */
+    .ex-section {
+      background: #141929;
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .ex-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .ex-icon { font-size: 28px; }
+
+    .ex-name {
+      font-size: 18px;
+      font-weight: 800;
+      color: #F0F4FF;
+    }
+
+    .ex-level {
+      font-size: 12px;
+      color: #00D4AA;
+      background: rgba(0,212,170,0.12);
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-left: auto;
+    }
+
+    .ex-stats {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+
+    .mini-stat {
+      flex: 1;
+      text-align: center;
+      background: #0a0e1a;
+      border-radius: 12px;
+      padding: 10px 6px;
+    }
+
+    .mini-val {
+      font-size: 22px;
+      font-weight: 900;
+      color: #4FC3F7;
+    }
+
+    .mini-lbl {
+      font-size: 10px;
+      color: #7B8DB0;
+      margin-top: 2px;
+    }
+
+    /* Mini sparkline */
+    .sparkline-wrap {
+      height: 48px;
+      position: relative;
+    }
+
+    .sparkline-canvas {
+      width: 100%;
+      height: 48px;
+    }
+
+    /* Stars total */
+    .total-stars {
+      text-align: center;
+      background: #141929;
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .total-stars-val {
+      font-size: 48px;
+      font-weight: 900;
+      color: #FFD700;
+    }
+
+    .total-stars-lbl {
+      font-size: 14px;
+      color: #7B8DB0;
+      margin-top: 4px;
+    }
+
+    /* Buttons */
+    .dash-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .btn-export {
+      flex: 1;
+      background: rgba(0,212,170,0.15);
+      border: 2px solid #00D4AA;
+      color: #00D4AA;
+      padding: 12px;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-clear {
+      background: rgba(244,67,54,0.1);
+      border: 2px solid rgba(244,67,54,0.3);
+      color: #F44336;
+      padding: 12px 18px;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .no-data {
+      text-align: center;
+      color: #7B8DB0;
+      padding: 20px;
+      font-size: 14px;
+    }
+
+    /* Bộ lọc theo ngày */
+    .date-filter {
+      background: #141929;
+      border-radius: 20px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .date-filter-label {
+      font-size: 12px;
+      color: #7B8DB0;
+      margin-bottom: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .date-quick {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .date-chip {
+      background: rgba(255,255,255,0.06);
+      border: 2px solid transparent;
+      color: #F0F4FF;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 8px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    .date-chip.active {
+      border-color: #00D4AA;
+      background: rgba(0,212,170,0.12);
+      color: #00D4AA;
+    }
+
+    .date-nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .date-nav-btn {
+      background: rgba(255,255,255,0.08);
+      border: none;
+      color: #F0F4FF;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      font-size: 16px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .date-nav-btn:disabled {
+      opacity: 0.35;
+      cursor: default;
+    }
+
+    .date-input {
+      flex: 1;
+      background: #0a0e1a;
+      border: 2px solid rgba(255,255,255,0.08);
+      color: #F0F4FF;
+      font-size: 15px;
+      font-weight: 700;
+      padding: 8px 12px;
+      border-radius: 12px;
+      min-width: 0;
+    }
+
+    .date-input:focus {
+      outline: none;
+      border-color: #4FC3F7;
+    }
+
+    .daily-overview {
+      background: #141929;
+      border-radius: 20px;
+      padding: 16px 20px;
+      margin-bottom: 16px;
+    }
+
+    .daily-overview-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #F0F4FF;
+      margin-bottom: 12px;
+    }
+
+    .daily-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      cursor: pointer;
+    }
+
+    .daily-row:last-child { border-bottom: none; }
+
+    .daily-row.active .daily-date { color: #00D4AA; }
+
+    .daily-date {
+      font-size: 14px;
+      font-weight: 700;
+      color: #F0F4FF;
+    }
+
+    .daily-meta {
+      font-size: 12px;
+      color: #7B8DB0;
+      margin-top: 2px;
+    }
+
+    .daily-stars {
+      font-size: 16px;
+      font-weight: 800;
+      color: #FFD700;
+    }
+
+    .period-subtitle {
+      font-size: 13px;
+      color: #7B8DB0;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-wrap">
+    <div class="dash-header">
+      <div class="dash-title">📊 Tiến Trình</div>
+      <button class="btn-back" onclick="window.location.href='../index.html'">← Về trang chủ</button>
+    </div>
+
+    <div id="date-filter" class="date-filter"></div>
+    <div id="daily-overview" class="daily-overview"></div>
+    <div id="total-stars-card" class="total-stars"></div>
+    <div id="exercises-container"></div>
+
+    <div class="dash-actions">
+      <button class="btn-export" onclick="exportData()">📥 Xuất báo cáo JSON</button>
+      <button class="btn-clear" onclick="clearData()">🗑️</button>
+    </div>
+  </div>
+
+  <script src="../data/sessions.js"></script>
+  <script>
+    const EXERCISE_META = {
+      saccade:  { icon: '🎯', name: 'Bắt Sao',   levelNames: ['Dễ','Trung bình','Khó hơn','Thử thách'] },
+      pursuit:  { icon: '🐠', name: 'Theo Cá',    levelNames: ['Rất chậm','Chậm','Trung bình','Nhanh hơn'] },
+      fixation: { icon: '👀', name: 'Nhìn Chằm',  levelNames: ['Dễ','Trung bình','Khó','Thử thách'] },
+      gap:      { icon: '⚡', name: 'Phản Xạ',    levelNames: ['Không gap','Gap nhỏ','Gap chuẩn','Gap lớn'] },
+    };
+
+    let selectedDate = null; // null = tất cả, 'YYYY-MM-DD' = theo ngày
+
+    function shiftDateKey(dateKey, days) {
+      const [y, m, d] = dateKey.split('-').map(Number);
+      const dt = new Date(y, m - 1, d);
+      dt.setDate(dt.getDate() + days);
+      const ny = dt.getFullYear();
+      const nm = String(dt.getMonth() + 1).padStart(2, '0');
+      const nd = String(dt.getDate()).padStart(2, '0');
+      return `${ny}-${nm}-${nd}`;
+    }
+
+    function periodLabel() {
+      if (!selectedDate) return 'Tất cả các ngày';
+      if (selectedDate === Sessions._todayKey()) return 'Hôm nay';
+      const yesterday = shiftDateKey(Sessions._todayKey(), -1);
+      if (selectedDate === yesterday) return 'Hôm qua';
+      return `Ngày ${Sessions.formatDateKey(selectedDate)}`;
+    }
+
+    function sessionsForView() {
+      return selectedDate ? Sessions.getSessionsForDate(selectedDate) : Sessions.loadAll();
+    }
+
+    function renderDateFilter() {
+      const today = Sessions._todayKey();
+      const yesterday = shiftDateKey(today, -1);
+      const el = document.getElementById('date-filter');
+
+      el.innerHTML = `
+        <div class="date-filter-label">Theo dõi theo ngày</div>
+        <div class="date-quick">
+          <button class="date-chip ${!selectedDate ? 'active' : ''}" data-date="">Tất cả</button>
+          <button class="date-chip ${selectedDate === today ? 'active' : ''}" data-date="${today}">Hôm nay</button>
+          <button class="date-chip ${selectedDate === yesterday ? 'active' : ''}" data-date="${yesterday}">Hôm qua</button>
+        </div>
+        <div class="date-nav">
+          <button class="date-nav-btn" id="btn-prev-day" title="Ngày trước">◀</button>
+          <input class="date-input" id="date-picker" type="date" max="${today}" value="${selectedDate || today}">
+          <button class="date-nav-btn" id="btn-next-day" title="Ngày sau">▶</button>
+        </div>
+      `;
+
+      el.querySelectorAll('.date-chip').forEach(btn => {
+        btn.addEventListener('click', () => {
+          selectedDate = btn.dataset.date || null;
+          render();
+        });
+      });
+
+      document.getElementById('date-picker').addEventListener('change', (e) => {
+        selectedDate = e.target.value;
+        render();
+      });
+
+      document.getElementById('btn-prev-day').addEventListener('click', () => {
+        const base = selectedDate || today;
+        selectedDate = shiftDateKey(base, -1);
+        render();
+      });
+
+      document.getElementById('btn-next-day').addEventListener('click', () => {
+        const base = selectedDate || today;
+        const next = shiftDateKey(base, 1);
+        if (next <= today) {
+          selectedDate = next;
+          render();
+        }
+      });
+
+      document.getElementById('btn-next-day').disabled =
+        selectedDate ? selectedDate >= today : false;
+    }
+
+    function renderDailyOverview() {
+      const el = document.getElementById('daily-overview');
+      const days = Sessions.getDailyOverview(10);
+
+      if (!days.length) {
+        el.innerHTML = `
+          <div class="daily-overview-title">📅 Lịch sử theo ngày</div>
+          <div class="no-data">Chưa có dữ liệu — hãy chơi thử một bài!</div>
+        `;
+        return;
+      }
+
+      el.innerHTML = `
+        <div class="daily-overview-title">📅 Lịch sử theo ngày</div>
+        ${days.map(d => `
+          <div class="daily-row ${selectedDate === d.date ? 'active' : ''}" data-date="${d.date}">
+            <div>
+              <div class="daily-date">${Sessions.formatDateKey(d.date)}${d.date === Sessions._todayKey() ? ' · Hôm nay' : ''}</div>
+              <div class="daily-meta">${d.sessions} lần chơi · TB ${d.avgAccuracy}%</div>
+            </div>
+            <div class="daily-stars">⭐ ${d.stars}</div>
+          </div>
+        `).join('')}
+      `;
+
+      el.querySelectorAll('.daily-row').forEach(row => {
+        row.addEventListener('click', () => {
+          selectedDate = row.dataset.date;
+          render();
+        });
+      });
+    }
+
+    function render() {
+      renderDateFilter();
+      renderDailyOverview();
+
+      const summary = Sessions.getSummary(selectedDate);
+      const viewSessions = sessionsForView();
+      const totalStars = Object.values(summary).reduce((s, v) => s + v.totalStars, 0);
+      const totalPlays = viewSessions.length;
+
+      document.getElementById('total-stars-card').innerHTML = `
+        <div class="total-stars-val">⭐ ${totalStars}</div>
+        <div class="total-stars-lbl">Tổng sao · ${periodLabel()}</div>
+        <div class="period-subtitle">${totalPlays} lần chơi${selectedDate ? '' : ' · ' + Sessions.getAvailableDates().length + ' ngày có dữ liệu'}</div>
+      `;
+
+      const container = document.getElementById('exercises-container');
+      container.innerHTML = '';
+
+      if (selectedDate && totalPlays === 0) {
+        container.innerHTML = `
+          <div class="ex-section">
+            <div class="no-data">Không có dữ liệu ngày ${Sessions.formatDateKey(selectedDate)}.</div>
+          </div>
+        `;
+        return;
+      }
+
+      Object.entries(EXERCISE_META).forEach(([key, meta]) => {
+        const data = summary[key];
+        const levelName = meta.levelNames[Math.min(data.currentLevel, meta.levelNames.length - 1)];
+
+        const section = document.createElement('div');
+        section.className = 'ex-section';
+
+        const noData = data.totalSessions === 0;
+        const accuracyLabel = selectedDate && data.avgAccuracy != null ? 'TB ngày' : 'Lần cuối';
+        const accuracyVal = selectedDate && data.avgAccuracy != null ? data.avgAccuracy : (data.lastAccuracy ?? '--');
+
+        section.innerHTML = `
+          <div class="ex-header">
+            <span class="ex-icon">${meta.icon}</span>
+            <span class="ex-name">${meta.name}</span>
+            <span class="ex-level">${levelName}</span>
+          </div>
+          ${noData ? `<div class="no-data">Chưa có dữ liệu — hãy thử bài này!</div>` : `
+          <div class="ex-stats">
+            <div class="mini-stat">
+              <div class="mini-val">${data.totalSessions}</div>
+              <div class="mini-lbl">Lần chơi</div>
+            </div>
+            <div class="mini-stat">
+              <div class="mini-val">${data.totalStars}⭐</div>
+              <div class="mini-lbl">Sao</div>
+            </div>
+            <div class="mini-stat">
+              <div class="mini-val">${accuracyVal}${accuracyVal !== '--' ? '%' : ''}</div>
+              <div class="mini-lbl">${accuracyLabel}</div>
+            </div>
+          </div>
+          <div class="sparkline-wrap">
+            <canvas class="sparkline-canvas" id="spark-${key}"></canvas>
+          </div>
+          `}
+        `;
+        container.appendChild(section);
+
+        if (!noData && data.trend.length > 1) {
+          drawSparkline(`spark-${key}`, data.trend);
+        }
+      });
+    }
+
+    function drawSparkline(canvasId, values) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      canvas.width = canvas.offsetWidth || 300;
+      canvas.height = 48;
+      const ctx = canvas.getContext('2d');
+      const n = values.length;
+      const pad = 6;
+      const w = canvas.width - pad * 2;
+      const h = canvas.height - pad * 2;
+      const min = 0;
+      const max = 100;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Dashed grid 50%
+      ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 6]);
+      ctx.beginPath();
+      ctx.moveTo(pad, pad + h * 0.5);
+      ctx.lineTo(pad + w, pad + h * 0.5);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Line
+      const grad = ctx.createLinearGradient(pad, 0, pad + w, 0);
+      grad.addColorStop(0, '#4FC3F7');
+      grad.addColorStop(1, '#00D4AA');
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 2.5;
+      ctx.lineJoin = 'round';
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      values.forEach((v, i) => {
+        const x = pad + (i / (n - 1)) * w;
+        const y = pad + (1 - (v - min) / (max - min)) * h;
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+
+      // Dots
+      values.forEach((v, i) => {
+        const x = pad + (i / (n - 1)) * w;
+        const y = pad + (1 - (v - min) / (max - min)) * h;
+        ctx.fillStyle = i === n - 1 ? '#FFD700' : '#00D4AA';
+        ctx.beginPath();
+        ctx.arc(x, y, i === n - 1 ? 4 : 2.5, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+
+    function exportData() {
+      Sessions.exportJSON(selectedDate);
+    }
+
+    function clearData() {
+      if (confirm('Xoá toàn bộ dữ liệu luyện tập?')) {
+        Sessions.clearAll();
+        render();
+      }
+    }
+
+    render();
+  </script>
+</body>
+</html>
